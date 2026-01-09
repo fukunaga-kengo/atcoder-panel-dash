@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtCoder Panel Dash - Spectate</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- 待機画面 -->
+    <div id="waitingView" class="spectate-container" style="justify-content: center; align-items: center;">
+        <div class="text-center">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">AtCoder Panel Dash</h1>
+            <p style="font-size: 1.5rem; color: var(--text-muted);">Waiting for game to start...</p>
+        </div>
+    </div>
+
+    <!-- ゲーム画面 -->
+    <div id="gameView" class="spectate-container hidden">
+        <div class="spectate-header">
+            <h1>AtCoder Panel Dash</h1>
+            <div class="timer" id="timer" style="font-size: 3rem; padding: 0.5rem 2rem;">--:--</div>
+        </div>
+
+        <div class="spectate-scoreboard" id="scoreboard"></div>
+
+        <div class="spectate-board">
+            <div class="board" id="board"></div>
+        </div>
+    </div>
+
+    <!-- 結果画面 -->
+    <div id="resultView" class="hidden">
+        <div class="result-overlay">
+            <div class="result-content">
+                <h2>Game Finished!</h2>
+                <div class="winner-name" id="winnerDisplay"></div>
+                <div class="spectate-scoreboard" id="finalScoreboard"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/spectate.js"></script>
+</body>
+</html>

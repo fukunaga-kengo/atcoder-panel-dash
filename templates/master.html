@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtCoder Panel Dash - Master</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>AtCoder Panel Dash - Master</h1>
+        <span class="status" id="gameStatus">Setup</span>
+    </header>
+
+    <div class="container">
+        <!-- セットアップ画面 -->
+        <div id="setupView">
+            <div class="master-layout">
+                <div class="setup-panel">
+                    <div class="card">
+                        <h2>Game Settings</h2>
+                        <div class="form-group">
+                            <label for="boardSize">Board Size (N x N)</label>
+                            <input type="number" id="boardSize" min="2" max="10" value="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="teamCount">Number of Teams</label>
+                            <select id="teamCount">
+                                <option value="2">2 Teams</option>
+                                <option value="3">3 Teams</option>
+                                <option value="4">4 Teams</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="timeLimit">Time Limit (minutes, 0 = no limit)</label>
+                            <input type="number" id="timeLimit" min="0" value="0">
+                        </div>
+                        <button class="btn btn-secondary" onclick="generateSetup()">Generate Setup</button>
+                    </div>
+
+                    <div class="card" id="teamsConfig">
+                        <h2>Teams Configuration</h2>
+                        <div id="teamsContainer"></div>
+                    </div>
+                </div>
+
+                <div class="problems-panel">
+                    <div class="card">
+                        <h2>Problem URLs</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">
+                            Enter AtCoder problem URLs (e.g., https://atcoder.jp/contests/abc001/tasks/abc001_a)
+                        </p>
+                        <div id="problemGrid" class="problem-grid"></div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveSetup()" style="width: 100%;">Save Setup</button>
+                    <button class="btn btn-primary mt-2" onclick="startGame()" id="startBtn" style="width: 100%;" disabled>Start Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ゲーム中画面 -->
+        <div id="gameView" class="hidden">
+            <div class="timer" id="timer"></div>
+
+            <div class="scoreboard" id="scoreboard"></div>
+
+            <div class="board-container">
+                <div class="board" id="board"></div>
+            </div>
+
+            <div class="card mt-2">
+                <div class="flex gap-2" style="justify-content: center;">
+                    <button class="btn btn-secondary" onclick="refreshGame()">Manual Refresh</button>
+                    <button class="btn btn-danger" onclick="endGame()">End Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="resultView" class="hidden">
+            <div class="card">
+                <h2 class="text-center">Game Result</h2>
+                <div class="scoreboard mt-2" id="finalScoreboard"></div>
+                <div class="text-center mt-2">
+                    <h3 id="winnerDisplay" style="font-size: 2rem;"></h3>
+                </div>
+                <div class="board-container mt-2">
+                    <div class="board" id="finalBoard"></div>
+                </div>
+                <div class="text-center mt-2">
+                    <button class="btn btn-primary" onclick="newGame()">New Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/master.js"></script>
+</body>
+</html>

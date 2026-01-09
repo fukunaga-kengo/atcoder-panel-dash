@@ -1,0 +1,460 @@
+/* AtCoder Panel Dash - スタイル */
+
+:root {
+    --bg-color: #1a1a2e;
+    --card-bg: #16213e;
+    --text-color: #eee;
+    --text-muted: #888;
+    --border-color: #333;
+    --cell-empty: #2a2a4a;
+    --cell-hover: #3a3a5a;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+}
+
+/* ヘッダー */
+.header {
+    background: var(--card-bg);
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.header .status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status.setup { background: #4a4a6a; }
+.status.running { background: #2d6a4f; }
+.status.ended { background: #6a2d2d; }
+
+/* コンテナ */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* カード */
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* フォーム */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #4a9eff;
+}
+
+/* ボタン */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #4a9eff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3a8eef;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.btn-secondary {
+    background: #4a4a6a;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a5a7a;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* チーム設定 */
+.team-config {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.team-config h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.color-preview {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.team-members {
+    margin-top: 0.5rem;
+}
+
+.team-members textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    min-height: 60px;
+    resize: vertical;
+}
+
+/* 盤面 */
+.board-container {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.board {
+    display: grid;
+    gap: 4px;
+    background: var(--border-color);
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.cell {
+    background: var(--cell-empty);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.cell:hover {
+    background: var(--cell-hover);
+}
+
+.cell.captured {
+    animation: capture 0.5s ease-out;
+}
+
+@keyframes capture {
+    0% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.cell .problem-id {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+
+.cell .problem-link {
+    font-size: 0.8rem;
+    color: #4a9eff;
+    text-decoration: none;
+}
+
+.cell .problem-link:hover {
+    text-decoration: underline;
+}
+
+.cell .captured-user {
+    font-size: 0.7rem;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* 問題設定グリッド */
+.problem-grid {
+    display: grid;
+    gap: 8px;
+    margin-top: 1rem;
+}
+
+.problem-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.problem-input label {
+    min-width: 60px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.problem-input input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+/* スコアボード */
+.scoreboard {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.score-card {
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 150px;
+}
+
+.score-card .team-name {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.score-card .score {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* タイマー */
+.timer {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.timer.warning {
+    color: #f39c12;
+}
+
+.timer.danger {
+    color: #e74c3c;
+}
+
+/* 観戦画面用 */
+.spectate-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.spectate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.spectate-board {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spectate-board .board {
+    gap: 6px;
+    padding: 6px;
+}
+
+.spectate-board .cell {
+    font-size: 1.2rem;
+}
+
+.spectate-board .cell .problem-id {
+    font-size: 1rem;
+}
+
+.spectate-board .cell .captured-user {
+    font-size: 0.9rem;
+}
+
+.spectate-scoreboard {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.spectate-scoreboard .score-card {
+    min-width: 200px;
+    padding: 1.5rem 3rem;
+}
+
+.spectate-scoreboard .score {
+    font-size: 4rem;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .scoreboard {
+        flex-direction: column;
+    }
+}
+
+/* マスター画面のレイアウト */
+.master-layout {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 1200px) {
+    .master-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 結果画面 */
+.result-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.result-content {
+    text-align: center;
+}
+
+.result-content h2 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+.winner-name {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+/* ユーティリティ */
+.hidden {
+    display: none !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+
+.flex {
+    display: flex;
+}
+
+.gap-1 {
+    gap: 0.5rem;
+}
+
+.gap-2 {
+    gap: 1rem;
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtCoder Panel Dash</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>AtCoder Panel Dash</h1>
+        <span class="status" id="gameStatus">--</span>
+    </header>
+
+    <div class="container">
+        <!-- 待機画面 -->
+        <div id="waitingView">
+            <div class="card text-center">
+                <h2>Waiting for game to start...</h2>
+                <p style="color: var(--text-muted); margin-top: 1rem;">
+                    The game master is setting up the game.
+                </p>
+            </div>
+        </div>
+
+        <!-- ゲーム中画面 -->
+        <div id="gameView" class="hidden">
+            <div class="timer" id="timer">--:--</div>
+
+            <div class="scoreboard" id="scoreboard"></div>
+
+            <div class="board-container">
+                <div class="board" id="board"></div>
+            </div>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="resultView" class="hidden">
+            <div class="card">
+                <h2 class="text-center">Game Finished!</h2>
+                <div class="text-center mt-2">
+                    <h3 id="winnerDisplay" style="font-size: 2rem;"></h3>
+                </div>
+                <div class="scoreboard mt-2" id="finalScoreboard"></div>
+                <div class="board-container mt-2">
+                    <div class="board" id="finalBoard"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/viewer.js"></script>
+</body>
+</html>
