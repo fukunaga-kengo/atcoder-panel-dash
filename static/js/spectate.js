@@ -4,152 +4,76 @@ let currentState = null;
 let pollingInterval = null;
 let timerInterval = null;
 
-// 初期化
-document.addEventListener('DOMContentLoaded', () => {
-    startPolling();
-});
+const VIEWS = ['waitingView', 'gameView', 'resultView'];
+const HEADER_OFFSET = 300;
+const MARGIN = 100;
+const MIN_CELL_SIZE = 80;
+const MAX_CELL_SIZE = 150;
 
-// ゲーム状態取得・画面更新
+document.addEventListener('DOMContentLoaded', startPolling);
+
 async function updateView() {
     currentState = await fetchGameState();
 
-    if (!currentState) {
+    if (!currentState || currentState.status === 'setup') {
         showWaitingView();
         return;
     }
 
-    switch (currentState.status) {
-        case 'setup':
-            showWaitingView();
-            break;
-        case 'running':
-            showGameView();
-            break;
-        case 'ended':
-            showResultView();
-            break;
-        default:
-            showWaitingView();
+    if (currentState.status === 'running') {
+        showGameView();
+    } else if (currentState.status === 'ended') {
+        showResultView();
+    } else {
+        showWaitingView();
     }
 }
 
-// 待機画面
 function showWaitingView() {
-    document.getElementById('waitingView').classList.remove('hidden');
-    document.getElementById('gameView').classList.add('hidden');
-    document.getElementById('resultView').classList.add('hidden');
+    showView('waitingView', VIEWS);
     stopTimerUpdate();
 }
 
-// ゲーム画面
 function showGameView() {
-    document.getElementById('waitingView').classList.add('hidden');
-    document.getElementById('gameView').classList.remove('hidden');
-    document.getElementById('resultView').classList.add('hidden');
-
-    renderSpectateBoard(document.getElementById('board'), currentState);
-    renderScoreboard(document.getElementById('scoreboard'), currentState, true);
+    showView('gameView', VIEWS);
+    renderSpectateBoard();
+    renderScoreboard(document.getElementById('scoreboard'), currentState);
     startTimerUpdate();
 }
 
-// 結果画面
 function showResultView() {
-    document.getElementById('waitingView').classList.add('hidden');
-    document.getElementById('gameView').classList.add('hidden');
-    document.getElementById('resultView').classList.remove('hidden');
-
-    renderScoreboard(document.getElementById('finalScoreboard'), currentState, true);
+    showView('resultView', VIEWS);
+    renderScoreboard(document.getElementById('finalScoreboard'), currentState);
+    displayWinner(document.getElementById('winnerDisplay'), currentState);
     stopTimerUpdate();
-
-    // 勝者表示
-    const winners = determineWinner(currentState);
-    const winnerDisplay = document.getElementById('winnerDisplay');
-    if (winners && winners.length > 0) {
-        if (winners.length === 1) {
-            winnerDisplay.textContent = winners[0].name;
-            winnerDisplay.style.color = winners[0].color || TEAM_COLORS[0];
-        } else {
-            winnerDisplay.textContent = 'Draw!';
-            winnerDisplay.style.color = '#fff';
-        }
-    }
 }
 
-// 観戦用盤面描画（問題IDとユーザー名表示、リンクなし）
-function renderSpectateBoard(boardElement, state) {
-    if (!state) {
-        boardElement.innerHTML = '<p>No game data</p>';
-        return;
-    }
-
-    const size = state.board_size;
-    // 画面サイズに合わせてセルサイズを計算
-    const viewportHeight = window.innerHeight;
-    const viewportWidth = window.innerWidth;
-    const availableHeight = viewportHeight - 300; // ヘッダー・スコアボード分を引く
-    const availableWidth = viewportWidth - 100;
+function calculateCellSize(boardSize) {
+    const availableHeight = window.innerHeight - HEADER_OFFSET;
+    const availableWidth = window.innerWidth - MARGIN;
     const maxCellSize = Math.min(
-        Math.floor(availableHeight / size) - 10,
-        Math.floor(availableWidth / size) - 10,
-        150
+        Math.floor(availableHeight / boardSize) - 10,
+        Math.floor(availableWidth / boardSize) - 10,
+        MAX_CELL_SIZE
     );
-    const cellSize = Math.max(80, maxCellSize);
-
-    boardElement.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
-    boardElement.style.gridTemplateRows = `repeat(${size}, ${cellSize}px)`;
-
-    // チームIDから色を取得するマップ
-    const teamColors = {};
-    state.teams.forEach((team, index) => {
-        teamColors[team.id] = team.color || TEAM_COLORS[index % TEAM_COLORS.length];
-    });
-
-    boardElement.innerHTML = '';
-
-    for (let row = 0; row < size; row++) {
-        for (let col = 0; col < size; col++) {
-            const cell = state.cells.find(c => c.row === row && c.col === col);
-            const cellElement = document.createElement('div');
-            cellElement.className = 'cell';
-
-            if (cell) {
-                // 問題ID表示（テキストのみ、リンクなし）
-                if (cell.problem_id) {
-                    const problemIdSpan = document.createElement('span');
-                    problemIdSpan.className = 'problem-id';
-                    problemIdSpan.style.fontSize = '1rem';
-                    problemIdSpan.textContent = cell.problem_id;
-                    cellElement.appendChild(problemIdSpan);
-                }
-
-                // 獲得済みの場合
-                if (cell.captured_by_team_id) {
-                    cellElement.style.backgroundColor = teamColors[cell.captured_by_team_id];
-                    cellElement.classList.add('captured');
-
-                    // ユーザー名表示
-                    if (cell.captured_by_user) {
-                        const userSpan = document.createElement('span');
-                        userSpan.className = 'captured-user';
-                        userSpan.style.fontSize = '1rem';
-                        userSpan.textContent = cell.captured_by_user;
-                        cellElement.appendChild(userSpan);
-                    }
-                }
-            }
-
-            boardElement.appendChild(cellElement);
-        }
-    }
+    return Math.max(MIN_CELL_SIZE, maxCellSize);
 }
 
-// ポーリング
+function renderSpectateBoard() {
+    if (!currentState) return;
+
+    const cellSize = calculateCellSize(currentState.board_size);
+    renderBoard(document.getElementById('board'), currentState, {
+        showLinks: false,
+        cellSize: cellSize
+    });
+}
+
 function startPolling() {
     updateView();
-    pollingInterval = setInterval(updateView, 3000);
+    pollingInterval = setInterval(updateView, POLLING_INTERVAL);
 }
 
-// タイマー更新
 function startTimerUpdate() {
     if (timerInterval) return;
     timerInterval = setInterval(() => {
@@ -164,9 +88,8 @@ function stopTimerUpdate() {
     }
 }
 
-// ウィンドウリサイズ時に盤面を再描画
 window.addEventListener('resize', () => {
     if (currentState && currentState.status === 'running') {
-        renderSpectateBoard(document.getElementById('board'), currentState);
+        renderSpectateBoard();
     }
 });

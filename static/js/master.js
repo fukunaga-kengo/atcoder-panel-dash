@@ -4,77 +4,53 @@ let currentState = null;
 let pollingInterval = null;
 let timerInterval = null;
 
-// 初期化
+const VIEWS = ['setupView', 'gameView', 'resultView'];
+
 document.addEventListener('DOMContentLoaded', async () => {
     await loadGameState();
     generateSetup();
 });
 
-// ゲーム状態を読み込み
 async function loadGameState() {
     currentState = await fetchGameState();
 
-    if (currentState) {
-        updateStatusBadge(currentState.status);
+    if (!currentState) return;
 
-        if (currentState.status === 'running') {
-            showGameView();
-            startPolling();
-        } else if (currentState.status === 'ended') {
-            showResultView();
-        } else {
-            showSetupView();
-            restoreSetup();
-        }
+    updateStatusBadge(currentState.status);
+
+    if (currentState.status === 'running') {
+        showGameView();
+        startPolling();
+    } else if (currentState.status === 'ended') {
+        showResultView();
+    } else {
+        showSetupView();
+        restoreSetup();
     }
 }
 
-// ステータスバッジ更新
 function updateStatusBadge(status) {
     const badge = document.getElementById('gameStatus');
     badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
     badge.className = `status ${status}`;
 }
 
-// セットアップ画面を表示
 function showSetupView() {
-    document.getElementById('setupView').classList.remove('hidden');
-    document.getElementById('gameView').classList.add('hidden');
-    document.getElementById('resultView').classList.add('hidden');
+    showView('setupView', VIEWS);
 }
 
-// ゲーム画面を表示
 function showGameView() {
-    document.getElementById('setupView').classList.add('hidden');
-    document.getElementById('gameView').classList.remove('hidden');
-    document.getElementById('resultView').classList.add('hidden');
-
+    showView('gameView', VIEWS);
     renderBoard(document.getElementById('board'), currentState, { showLinks: true });
     renderScoreboard(document.getElementById('scoreboard'), currentState);
     startTimerUpdate();
 }
 
-// 結果画面を表示
 function showResultView() {
-    document.getElementById('setupView').classList.add('hidden');
-    document.getElementById('gameView').classList.add('hidden');
-    document.getElementById('resultView').classList.remove('hidden');
-
+    showView('resultView', VIEWS);
     renderBoard(document.getElementById('finalBoard'), currentState, { showLinks: false });
     renderScoreboard(document.getElementById('finalScoreboard'), currentState);
-
-    // 勝者表示
-    const winners = determineWinner(currentState);
-    const winnerDisplay = document.getElementById('winnerDisplay');
-    if (winners && winners.length > 0) {
-        if (winners.length === 1) {
-            winnerDisplay.textContent = `Winner: ${winners[0].name}`;
-            winnerDisplay.style.color = winners[0].color || TEAM_COLORS[0];
-        } else {
-            winnerDisplay.textContent = 'Draw!';
-            winnerDisplay.style.color = '#fff';
-        }
-    }
+    displayWinner(document.getElementById('winnerDisplay'), currentState);
 }
 
 // セットアップ生成
@@ -281,13 +257,11 @@ async function updateGameView() {
     renderScoreboard(document.getElementById('scoreboard'), currentState);
 }
 
-// ポーリング開始
 function startPolling() {
     if (pollingInterval) return;
-    pollingInterval = setInterval(updateGameView, 3000);
+    pollingInterval = setInterval(updateGameView, POLLING_INTERVAL);
 }
 
-// ポーリング停止
 function stopPolling() {
     if (pollingInterval) {
         clearInterval(pollingInterval);
@@ -295,19 +269,16 @@ function stopPolling() {
     }
 }
 
-// タイマー更新開始
 function startTimerUpdate() {
     if (timerInterval) return;
     timerInterval = setInterval(() => {
         const remaining = updateTimer(document.getElementById('timer'), currentState);
         if (remaining === 0 && currentState && currentState.status === 'running') {
-            // 時間切れ
             endGame();
         }
     }, 1000);
 }
 
-// タイマー更新停止
 function stopTimerUpdate() {
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -315,11 +286,9 @@ function stopTimerUpdate() {
     }
 }
 
-// 新規ゲーム
 function newGame() {
     location.reload();
 }
 
-// イベントリスナー
 document.getElementById('boardSize').addEventListener('change', generateSetup);
 document.getElementById('teamCount').addEventListener('change', generateSetup);
